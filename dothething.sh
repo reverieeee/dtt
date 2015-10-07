@@ -57,7 +57,34 @@ partition ()
 
 setup ()
 {
-    # mirrorlist setup goes first
+    # mirrorlist setup first
     /usr/bin/cp -v -f /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
     /usr/bin/reflector --verbose --country 'United States' -l 20 -p http --sort rate --save /etc/pacman.d/mirrorlist
+    /usr/bin/pacman --noconfirm -Syy
+
+    # install base, base-devel, and some other stuff
+    /usr/bin/pacstrap /mnt base base-devel vim zsh git screen irssi
+
+    # generate an fstab using uuids
+    /usr/bin/genfstab -U /mnt > /mnt/etc/fstab
+
+    # make sure it's alright
+    /usr/bin/cat /mnt/etc/fstab
+
+    # if genfstab is wrong, allow changes to be made
+    read -p "does this look correct? [y/n]: " ans
+    if [ "$ans" == "n" ]; then
+        /usr/bin/nano -w /mnt/etc/fstab
+    else
+        echo "good to know!"
+    fi
+
+    # just in case...
+    read -p "done making changes? [y/n]: " isdone
+    if [ "$isdone" == "n" ]; then
+        /usr/bin/nano -w /mnt/etc/fstab
+        exit 0
+    else
+        exit 0
+    fi
 }
