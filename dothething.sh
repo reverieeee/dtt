@@ -5,6 +5,7 @@ HOSTNAME="loki" # only need short form
 LOCALE="en_US.UTF-8" # :911:
 TIMEZONE="America/Detroit" # :911:
 ARCH="$(uname -m)"
+PARTCMD="/usr/bin/parted -s /dev/sda"
 
 init ()
 {
@@ -32,29 +33,15 @@ partition ()
     # 5) that i know how to properly partition a disk
 
     ###################
-    # 128MB /boot
+    # 512MB /boot
     # 8GB swap
     # rest of disk /
     ###################
     # if this doesn't work for you, alter it
     # heredocs are fun
-    /usr/bin/fdisk /dev/sda <<EOF
-    o
-    n
-    p
-    1
-
-    +128M
-    n
-    p
-    2
-
-    +8G
-    n
-    p
-    3
-
-
-    w
-    EOF
+    $PARTCMD -a optimal mklabel msdos
+    $PARTCMD -a optimal unit mb mkpart primary ext4 1 513
+    $PARTCMD set 1 boot on
+    $PARTCMD -a optimal unit mb mkpart primary linux-swap 513 8513
+    $PARTCMD -a optimal unit mb mkpart primary ext4 8513 100%
 }
