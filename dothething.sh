@@ -32,11 +32,11 @@ partition ()
     # 4) the system has 8gb of RAM
     # 5) that i know how to properly partition a disk
 
-    ###################
-    # 512MB /boot
-    # 8GB swap
-    # rest of disk /
-    ###################
+    ####################
+    # 512MB | /boot    #
+    # 8GB   | swap     #
+    # rest  | /        #
+    ####################
     # if this doesn't work for you, alter it
     $PARTCMD -a optimal mklabel msdos
     $PARTCMD -a optimal unit mb mkpart primary ext4 1 513
