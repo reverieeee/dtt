@@ -26,13 +26,14 @@ partition ()
 {
     # we assume a few things here
     # 1) the disk we're installing to is /dev/sda
-    # 2) the disk is at least 500gb in size
+    # 2) the disk is at least 500gb in size]]
     # 3) the system isn't uefi
-    # 4) that i know how to properly partition a disk
+    # 4) the system has 8gb of RAM
+    # 5) that i know how to properly partition a disk
 
     ###################
     # 128MB /boot
-    # 1GB swap
+    # 8GB swap
     # rest of disk /
     ###################
     # if this doesn't work for you, alter it
@@ -48,7 +49,7 @@ partition ()
     p
     2
 
-    +1G
+    +8G
     n
     p
     3
