@@ -13,7 +13,7 @@ init ()
     if [[ $PING -eq 0 ]]; then
         echo "the system is down"
         echo "set up your network manually"
-        exit $?
+        exit 1
     else
         echo "the system is up"
     fi
