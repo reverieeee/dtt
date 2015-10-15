@@ -127,7 +127,7 @@ prepare ()
     echo "generating locales..."
     /usr/bin/locale-gen
 
-    echo "LANG=$LANG" >> /etc/locale.conf
+    echo "LANG=$LOCALE" >> /etc/locale.conf
 
     # set up our timezone
     # TODO: figure out a better way to do this
