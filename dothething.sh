@@ -12,14 +12,14 @@
 
 HOSTNAME="loki" # only need short form
 LOCALE="en_US.UTF-8" # :911:
-TIMEZONE="America/Detroit" # :911:
-ARCH="$(uname -m)"
+TIMEZONE="America/New_York" # :911:
 PARTCMD="/usr/bin/parted -s /dev/sda"
 
 init ()
 {
     # if ping check fails setup the network yourself
-    PING=$(/usr/bin/ping -c 3 8.8.8.8 | grep 'received' | awk -F',' '{ print $2 }' | awk '{ print $1 }') # this is ugly
+    # TODO: this, but a lot better
+    PING=$(/usr/bin/ping -c 3 8.8.8.8 | grep 'received' | awk -F',' '{ print $2 }' | awk '{ print $1 }')
 
     if [[ $PING -eq 0 ]]; then
         echo "the system is down"
@@ -38,17 +38,13 @@ init ()
     else
         echo "the system is up"
     fi
-
-    # set our timezone and enable ntp
-    #/usr/bin/timedatectl set-timezone $TIMEZONE
-    #/usr/bin/timedatectl set-ntp true
 }
 
 partition ()
 {
     # we assume a few things here
     # 1) the disk we're installing to is /dev/sda
-    # 2) the disk is at least 500gb in size
+    # 2) the disk is big enough for 8gb swap
     # 3) the system isn't uefi
     # 4) the system has 8gb of RAM
     # 5) that i know how to properly partition a disk
@@ -59,6 +55,7 @@ partition ()
     # rest  | /        #
     ####################
     # if this doesn't work for you, alter it
+    # TODO: this could possibly be done a lot better with sfdisk
     echo "partitioning using the following layout:"
     echo "512MB | /boot"
     echo "8GB   | swap"
@@ -102,11 +99,12 @@ setup ()
     /usr/bin/cat /mnt/etc/fstab
 
     # if genfstab is wrong, allow changes to be made
+    # TODO: clean these conditional statements up, they suck
     read -p "does this look correct? [y/n]: " ans
     if [ "$ans" == "n" ]; then
         /usr/bin/nano -w /mnt/etc/fstab
     else
-        echo "good to know!"
+        echo "good to know"
     fi
 
     # just in case...
@@ -129,12 +127,13 @@ prepare ()
     echo "generating locales..."
     /usr/bin/locale-gen
 
-    echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+    echo "LANG=$LANG" >> /etc/locale.conf
 
     # set up our timezone
     # TODO: figure out a better way to do this
     echo "configuring timezone using America/New_York..."
     echo "2\n49\n1\n1\n" | /usr/bin/tzselect
 
-    /usr/bin/ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
+    /usr/bin/ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+    /usr/bin/hwclock -uw
 }
