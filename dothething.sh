@@ -119,21 +119,5 @@ setup ()
 
 prepare ()
 {
-    # chroot to our install
-    /usr/bin/arch-chroot /mnt /bin/bash
-
-    # replace this with your own locale
-    /usr/bin/sed -i 's/^#en_US.UTF-8\ UTF-8/en_US.UTF-8\ UTF-8/' /etc/locale.gen
-    echo "generating locales..."
-    /usr/bin/locale-gen
-
-    echo "LANG=$LOCALE" >> /etc/locale.conf
-
-    # set up our timezone
-    # TODO: figure out a better way to do this
-    echo "configuring timezone using America/New_York..."
-    echo "2\n49\n1\n1\n" | /usr/bin/tzselect
-
-    /usr/bin/ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-    /usr/bin/hwclock -uw
+    #TODO: properly run commands within chroot
 }
